@@ -142,3 +142,5 @@ Database/
 # Bỏ qua toàn bộ thư mục images và dataset
 images/
 dataset/
+image_path.json
+faiss_normal_ViT.bin
