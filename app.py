@@ -36,9 +36,12 @@ def thumbnailimg():
     print("load_iddoc")
 
     pagefile = []
-    index = int(request.args.get('index'))
-    if index == None:
-        index = 0
+
+    index_value = request.args.get('index', 0)
+    try:
+        index = int(index_value)
+    except ValueError:
+        index = 0 
 
     imgperindex = 100
     
