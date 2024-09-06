@@ -10,12 +10,20 @@
 <body onload="on_load();">
     <style>
         *{
-            margin: 0;
+          margin: 0;
         }
         body{
           margin: 0;
         }
-        
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: 0; 
+            object-fit: cover;
+        }
         .custom-btn {
           color: #fff;
           border-radius: 5px;
@@ -32,45 +40,80 @@
           outline: none;
         }
 
-        .btn-13 {
-          background-color: #89d8d3;
-          background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
+        /* CSS */
+        .btnsearchandclear {
+          padding: 0.6em 2em;
           border: none;
+          outline: none;
+          color: rgb(255, 255, 255);
+          background: #111;
+          cursor: pointer;
+          position: relative;
+          z-index: 0;
+          border-radius: 10px;
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: manipulation;
           z-index: 1;
         }
-        .btn-13:after {
-          position: absolute;
+
+        .btnsearchandclear:before {
           content: "";
-          width: 100%;
-          height: 0;
-          bottom: 0;
-          left: 0;
+          background: linear-gradient(
+            45deg,
+            #ff0000,
+            #ff7300,
+            #fffb00,
+            #48ff00,
+            #00ffd5,
+            #002bff,
+            #7a00ff,
+            #ff00c8,
+            #ff0000
+          );
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          background-size: 400%;
           z-index: -1;
-          border-radius: 5px;
-          background-color: #4dccc6;
-        background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
-          box-shadow:
-          -7px -7px 20px 0px #fff9,
-          -4px -4px 5px 0px #fff9,
-          7px 7px 20px 0px #0002,
-          4px 4px 5px 0px #0001;
-          transition: all 0.3s ease;
+          filter: blur(5px);
+          -webkit-filter: blur(5px);
+          width: calc(100% + 4px);
+          height: calc(100% + 4px);
+          animation: glowing-button-85 20s linear infinite;
+          transition: opacity 0.3s ease-in-out;
+          border-radius: 10px;
         }
-        .btn-13:hover {
-          color: #fff;
+
+        @keyframes glowing-btnsearchandclear {
+          0% {
+            background-position: 0 0;
+          }
+          50% {
+            background-position: 400% 0;
+          }
+          100% {
+            background-position: 0 0;
+          }
         }
-        .btn-13:hover:after {
-          top: 0;
+
+        .btnsearchandclear:after {
+          z-index: -1;
+          content: "";
+          position: absolute;
+          width: 100%;
           height: 100%;
-        }
-        .btn-13:active {
-          top: 2px;
+          background: #222;
+          left: 0;
+          top: 0;
+          border-radius: 10px;
         }
 
         .container{
           width: 100%;
           height: 100%;
-          background-color: #e0e5ec;;
+          background-color: #e0e5ec;
+          z-index: 1;
         }
         /* search */
         .search_container{
@@ -84,25 +127,42 @@
           width: 100%;
           height: 100%;
           padding: 20px;
-         
+          z-index: 1;
         }
         .search label{
           position: absolute;
           font-size: 30px;
           padding: 10px
         }
-        .search input{
-          width: 96%;
-          height: 50px;
-          border: none;
-          border-radius: 10px;
-          padding-left: 5%;
-          font-size: 20px;
+        .search input {
+            width: 96%;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.5); 
+            background-color: rgba(255, 255, 255, 0.2); 
+            border-radius: 10px;
+            padding-left: 5%;
+            font-size: 20px;
+            color: white; 
+            outline: none;
+            transition: all 0.3s ease;
         }
+
+        .search input::placeholder {
+            color: rgba(255, 255, 255, 0.7); 
+        }
+
+        .search input:hover,
+        .search input:focus {
+            border-color: rgba(255, 255, 255, 1); 
+            background-color: rgba(255, 255, 255, 0.3); 
+        }
+
         .group_btn{
           width: 100%;
           height: 100%;
           padding-top: 20px;
+          justify-content: flex-end; 
+          gap: 10px; 
         }
         .group_btn button{
           width: 130px;
@@ -118,6 +178,7 @@
         height: 100%;
         background-color: #bdc0c5;
         padding-left: 20px;
+        z-index: 1;
        }
        .img_path label{
         font-size: 18px;
@@ -182,13 +243,48 @@
         font-size: 15px;
        }
        
-      
+       #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); 
+        }
+
+        #imageModal img {
+            position: absolute;
+            max-width: 90%;
+            max-height: 90%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8); 
+            opacity: 0; 
+            transition: all 0.5s ease; 
+            border: 5px solid white;
+            border-radius: 10px;
+        }
+
+        
+        #imageModal.show {
+            display: block;
+        }
+
+        #imageModal.show img {
+            transform: translate(-50%, -50%) scale(1); 
+            opacity: 1; 
+        }
+
+
         /* selection */
-    
+        
         /* list img */
         .image{
           width: 100%;
           height: 100%;
+          z-index: 2;
         }
         /* list img */
     
@@ -201,23 +297,41 @@
                 background-color: #e0e5ec;
                 /* height: 120px;
                 width: 516px; */
+                z-index: 2;
             }
     
             .container_img_btn {
-                position: relative;
+                display: flex;
+                flex-direction: column; 
+                align-items: center;    
                 width: 100%;
                 max-width: 318px;
-                display: grid;
-                grid-template-columns: auto auto auto auto;
                 padding: 1%;
                 cursor: pointer;
+                z-index: 2;
             }
+
             
             .container_img_btn img {
                 width: 100%;
-                height: 100%;
+                height: auto;
+                border: 5px solid white;
+                padding: 1px;
+                border-radius: 8px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                opacity: 0; 
+                transform: scale(0.5); 
+                transition: opacity 0.5s ease, transform 0.5s ease; 
             }
-    
+
+            .container_img_btn img.show {
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            .container_img_btn img.hide {
+                opacity: 0; 
+                transform: scale(0.2); 
+            }
             .container_img_btn .btn_knn {
                 display: none;
                 position: absolute;
@@ -244,7 +358,13 @@
                 border-radius: 5px;
                 text-align: center;
             }
-            
+            .container_img_btn p {
+                font-size: 18px; 
+                color: white;    
+                text-align: center;
+                margin-top: 10px; 
+            }
+
             .container_img_btn .btn_knn:hover{
               background-color: #145552;
             }
@@ -288,8 +408,13 @@
               }
             }
           }
-    
+          
+
+
       </style>
+  <video autoplay muted loop playsinline id="video-background">
+      <source src="{{ url_for('static', filename='video/gfp-astro-timelapse.mp4') }}" type="video/mp4">
+  </video>
     <div class="container">
         <div class="search_container">
           <div class="search">
@@ -300,26 +425,23 @@
             <input id="text_query" type="text" placeholder="Text query">
           </div>
           <div class="group_btn">
-            <button class="custom-btn btn-13" onclick="search();"><span>Search</span></button>
+            <button class="custom-btn btnsearchandclear" onclick="search();"><span>Search</span></button>
+            <button class="custom-btn btnsearchandclear" onclick="clearImages();"><span>Clear</span></button>
           </div>
   
         </div>
 
 
-        <!-- <div style="height: 5px; width: 100%; background-color: black; margin-bottom: 5px; margin-top: 5px;"></div> -->
-        <div id="div_img">
-            
-        </div>
+        <!--<div style="height: 5px; width: 100%; background-color: black; margin-bottom: 5px; margin-top: 5px;"></div>-->
+        <div id="div_img"></div>
   
-        <div style="height: 5px; width: 100%; background-color: black;"></div>
-        <div id="div_page">
-            
-        </div>
-        <div id="div_total_page">Total: 1200 page</div>
-        <div style="margin-bottom: 50px;"></div>
-  
+        <!--<div style="height: 5px; width: 100%; background-color: black;"></div>-->
+        <div id="div_page"></div>
+        <div id="imageModal">
+          <img id="zoomedImage"></div>
       </div>
     <script>
+        
         var data = '{{ data|tojson }}';
         data = data.replace(/\s/g, '');
         data = data.replace(/\\/g, '/');
@@ -327,6 +449,8 @@
         let btn_knn = document.getElementsByClassName("btn_knn");
         let btn_select = document.getElementsByClassName("btn_select");
         let hoverImg = document.getElementsByClassName("hoverImg");
+        
+
         // console.log("data: " + JSON.stringify(data))
         function add_paging(){
             console.log(data['num_page']);
@@ -366,25 +490,91 @@
                 iDiv.innerHTML = "...";
                 document.getElementById("div_page").appendChild(iDiv);
             }
-            document.getElementById("div_total_page").innerHTML = "Total: "+data['num_page'].toString()+" page";
         }
         
-        function add_img(div_id_image){
+        function showZoomedImage(imgSrc) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("zoomedImage");
+
+            
+            modalImg.src = imgSrc;
+
+            
+            modal.style.display = "block";
+            
+            
+            setTimeout(() => {
+                modal.classList.add("show");
+            }, 150);  
+
+            
+            modal.onclick = function () {
+                modal.classList.remove("show");
+                setTimeout(() => {
+                    modal.style.display = "none";
+                }, 350); 
+            };
+        }
+
+        
+        function add_img(div_id_image) {
             let div_img = document.getElementById("div_img");
             let pagefile_list = data['pagefile'];
-            
-            pagefile_list.forEach((item,index) => {
-                // console.log('item: ' + JSON.stringify(item))
-                $("#div_img").append(
-                    `<div class= "container_img_btn"  onmouseover="mouseOver(${index})" onmouseout="mouseOut(${index})">
-                        <button class="btn_knn" onClick="go_img_search(${item.id})">IR</button>
-                        <img class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
-                    </div>`
-                )
+
+            pagefile_list.forEach((item, index) => {
+                
+                let imgName = item.imgpath.split('/').pop();
+                
+                
+                let imgContainer = document.createElement('div');
+                imgContainer.className = 'container_img_btn';
+                
+                
+                let img = document.createElement('img');
+                img.src = `get_img?fpath=${item.imgpath}`;
+                img.alt = imgName;
+                img.className = 'hoverImg';
+
+                
+                img.onload = function() {
+                    img.classList.add('show');
+                };
+
+                
+                img.onclick = function() {
+                    showZoomedImage(this.src);
+                };
+
+                
+                let imgCaption = document.createElement('p');
+                imgCaption.style.textAlign = 'center';
+                imgCaption.textContent = imgName;
+
+                
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(imgCaption);
+
+                
+                div_img.appendChild(imgContainer);
             });
-        
         }
-        
+
+
+
+        function clearImages() {
+            let images = document.querySelectorAll("#div_img img");
+
+            images.forEach((img) => {
+                img.classList.add('hide'); 
+            });
+            setTimeout(() => {
+                document.getElementById('div_img').innerHTML = "";
+                document.getElementById('div_page').innerHTML = ""; 
+                showAlert("Images cleared.");
+            }, 500); 
+        }
+
+
         function mouseOver(id){
             // console.log('type: ' + typeof(btn_knn))
             btn_knn[id].style.display="block";
@@ -413,15 +603,35 @@
             window.open("/showsegment?imgid="+id);
         }
 
-        function search(){
-            text_query = document.getElementById('text_query').value;
-
-            window.location.href = "/textsearch?textquery="+text_query;
-            
-            document.getElementById('text_query').innerHTML = text_query;
+        function search() {
+            text_query = document.getElementById('text_query').value.trim();
+            if (text_query === "") {
+                showAlert("Please enter what you want to search.");
+            } else {
+                window.location.href = "/textsearch?textquery=" + text_query;
+            }
         }
 
+        function showAlert(message) {
+            var alertDiv = document.createElement("div");
+            alertDiv.innerHTML = message;
+            alertDiv.style.position = "fixed";
+            alertDiv.style.top = "50%";
+            alertDiv.style.left = "50%";
+            alertDiv.style.transform = "translate(-50%, -50%)";
+            alertDiv.style.padding = "20px";
+            alertDiv.style.backgroundColor = "rgba(200, 0, 55, 0.8)";
+            alertDiv.style.color = "white";
+            alertDiv.style.borderRadius = "10px";
+            alertDiv.style.fontSize = "20px";
+            alertDiv.style.textAlign = "center";
+            alertDiv.style.zIndex = "1000";
 
+            document.body.appendChild(alertDiv);
+            setTimeout(function () {
+                document.body.removeChild(alertDiv);
+            }, 3000);
+        }
     </script>
 </body>
 </html> 

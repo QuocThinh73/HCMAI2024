@@ -32,6 +32,10 @@ MyFaiss = Myfaiss(bin_file, DictImagePath, 'cpu', Translation(), "ViT-B/32")
 @app.route('/home')
 @app.route('/')
 def thumbnailimg():
+    if not request.args.get('textquery') and not request.args.get('imgid'):
+        # Nếu không có truy vấn tìm kiếm thì không hiển thị ảnh
+        return render_template('home.html', data={'pagefile': []})
+    
     print("load_iddoc")
 
     pagefile = []
@@ -44,9 +48,6 @@ def thumbnailimg():
 
     imgperindex = 100
     
-    # imgpath = request.args.get('imgpath') + "/"
-    pagefile = []
-
     page_filelist = []
     list_idx = []
 
@@ -76,6 +77,7 @@ def thumbnailimg():
     
     return render_template('home.html', data=data)
 
+
 @app.route('/imgsearch')
 def image_search():
     print("image search")
@@ -93,6 +95,7 @@ def image_search():
     return render_template('home.html', data=data)
 
 @app.route('/textsearch')
+@app.route('/textsearch')
 def text_search():
     print("text search")
 
@@ -100,39 +103,33 @@ def text_search():
     text_query = request.args.get('textquery')
     _, list_ids, _, list_image_paths = MyFaiss.text_search(text_query, k=50)
 
-    imgperindex = 100 
+    # Hiển thị tối đa 10 ảnh
+    imgperindex = 10  
 
-    for imgpath, id in zip(list_image_paths, list_ids):
+    for imgpath, id in zip(list_image_paths[:imgperindex], list_ids[:imgperindex]):
         pagefile.append({'imgpath': imgpath, 'id': int(id)})
 
-    data = {'num_page': int(LenDictPath/imgperindex)+1, 'pagefile': pagefile}
+    data = {'num_page': 1, 'pagefile': pagefile}
     
     return render_template('home.html', data=data)
 
+
 @app.route('/get_img')
 def get_img():
-    # print("get_img")
     fpath = request.args.get('fpath')
-    # fpath = fpath
-    list_image_name = fpath.split("/")
-    image_name = "/".join(list_image_name[-2:])
-
     if os.path.exists(fpath):
         img = cv2.imread(fpath)
     else:
-        print("load 404.jph")
+        print("load 404.jpg")
         img = cv2.imread("./static/images/404.jpg")
 
-    img = cv2.resize(img, (1280,720))
-
-    # print(img.shape)
-    img = cv2.putText(img, image_name, (30, 80), cv2.FONT_HERSHEY_SIMPLEX, 
-                   3, (255, 0, 0), 4, cv2.LINE_AA)
+    img = cv2.resize(img, (1280, 720))
 
     ret, jpeg = cv2.imencode('.jpg', img)
-    return  Response((b'--frame\r\n'
+    return Response((b'--frame\r\n'
                      b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n'),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 
 
