@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, Response, request, send_file, jsonify
 import cv2
 import os
