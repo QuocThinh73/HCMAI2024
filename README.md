@@ -24,6 +24,4 @@ You run all the cells in create_faiss_index.ipynb to create database for webapp.
 python app.py
 ```
 
-URL: http://0.0.0.0:5001/home?index=0
-
 
