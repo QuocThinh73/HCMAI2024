@@ -8,7 +8,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 links = [
     # 'https://drive.google.com/drive/folders/1ugJdQsGLZfuQUr6uUZ1xjTEahMR7_qpM', #L01
-    # 'https://drive.google.com/drive/folders/1qlJZ-e8M7AJsdsm9wGtIdpoBB0YCppBZ', #L02
+     'https://drive.google.com/drive/folders/1qlJZ-e8M7AJsdsm9wGtIdpoBB0YCppBZ', #L02
     # 'https://drive.google.com/drive/folders/1OfhVpIInYC8Q3bvtATis9DTVtW4-sqqb', #L03
     # 'https://drive.google.com/drive/folders/1ynlvpfiIV9u0LicSy2bmFW73ODxeke9J', #L04
     # 'https://drive.google.com/drive/folders/1G9XocpulEspLjwcxwlO4LgsRwWAM7AoQ', #L05
@@ -18,7 +18,7 @@ links = [
     # 'https://drive.google.com/drive/folders/1IuRcRYhA68Bgv6LiAklRG2Ae3yXJWax9', #L09
     # 'https://drive.google.com/drive/folders/1u1uJrx4MUmbF6gXCnMJg15mZhKkdXxZN', #L10
     # 'https://drive.google.com/drive/folders/1yLSm_lQY1E_h8U5MM4WAnd1oPCXcB1Uo', #L11
-    'https://drive.google.com/drive/folders/1M2ERH02pqFfG4EockYGBPWNqRIu_qb2t'  # L12
+    # 'https://drive.google.com/drive/folders/1M2ERH02pqFfG4EockYGBPWNqRIu_qb2t'  # L12
 ]
 
 current_path = os.getcwd()
