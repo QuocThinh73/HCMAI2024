@@ -94,24 +94,35 @@ def image_search():
     
     return render_template('home.html', data=data)
 
-@app.route('/textsearch')
+def split_text(text, max_length):
+    words = text.split()
+    return [' '.join(words[i:i + max_length]) for i in range(0, len(words), max_length)]
+
 @app.route('/textsearch')
 def text_search():
     print("text search")
 
-    pagefile = []
     text_query = request.args.get('textquery')
-    _, list_ids, _, list_image_paths = MyFaiss.text_search(text_query, k=50)
 
-    # Hiển thị tối đa 10 ảnh
-    imgperindex = 10  
+    max_length = 77  
+    text_parts = split_text(text_query, max_length) 
 
-    for imgpath, id in zip(list_image_paths[:imgperindex], list_ids[:imgperindex]):
-        pagefile.append({'imgpath': imgpath, 'id': int(id)})
+    all_ids = []
+    all_image_paths = []
+
+    for part in text_parts:
+        _, list_ids, _, list_image_paths = MyFaiss.text_search(part, k=50)
+        
+        all_ids.extend(list_ids)
+        all_image_paths.extend(list_image_paths)
+
+    imgperindex = 10
+    pagefile = [{'imgpath': imgpath, 'id': int(id)} for imgpath, id in zip(all_image_paths[:imgperindex], all_ids[:imgperindex])]
 
     data = {'num_page': 1, 'pagefile': pagefile}
-    
+
     return render_template('home.html', data=data)
+
 
 
 @app.route('/get_img')
